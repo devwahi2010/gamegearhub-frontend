@@ -7,6 +7,8 @@ import RequireAuth from './auth/RequireAuth.jsx';
 import { AuthProvider } from './auth/AuthContext.jsx';
 import Devices from './pages/Devices.jsx';
 import CreateDevice from './pages/CreateDevice.jsx';
+import MyRentals from './pages/MyRentals.jsx';
+import ManageRequests from './pages/ManageRequests.jsx';
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
               <CreateDevice />
             </RequireAuth>
           } />
+          <Route path="/my-rentals" element={<RequireAuth><MyRentals /></RequireAuth>} />
+          <Route path="/manage-requests" element={<RequireAuth><ManageRequests /></RequireAuth>} />
         </Routes>
       </Router>
     </AuthProvider>
