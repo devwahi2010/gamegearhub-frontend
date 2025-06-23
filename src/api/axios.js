@@ -7,4 +7,15 @@ const axiosInstance = axios.create({
   },
 });
 
+// ✅ Automatically attach token to every request
+axiosInstance.interceptors.request.use((config) => {
+  const access = localStorage.getItem('access');
+  if (access) {
+    config.headers.Authorization = `Bearer ${access}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
 export default axiosInstance;
