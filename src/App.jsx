@@ -9,6 +9,9 @@ import Devices from './pages/Devices.jsx';
 import CreateDevice from './pages/CreateDevice.jsx';
 import MyRentals from './pages/MyRentals.jsx';
 import ManageRequests from './pages/ManageRequests.jsx';
+import Chat from './pages/Chat.jsx'; // ✅ Add this
+
+
 
 function App() {
   return (
