@@ -1,57 +1,67 @@
-// gamegearhub-frontend/src/pages/Register.jsx
-
-import React, { useState } from 'react';
+// src/pages/Register.jsx
+import React, { useState, useEffect } from 'react';
 import axiosInstance from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import { Container, Form, Button, Alert } from 'react-bootstrap';
 
 function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [full_name, setFullName] = useState('');
-  const [success, setSuccess] = useState('');
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axiosInstance.post('register/', { email, password, full_name });
-      setSuccess('Registered! You can now login.');
+      setMessage('✅ Registered successfully! Redirecting to login...');
       setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
-      console.error(err.response?.data || err.message);
-      setSuccess('Error occurred. Try again.');
+      setMessage('❌ Registration failed. Try again.');
     }
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      {success && <p>{success}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={full_name}
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="Full Name"
-          required
-        /><br />
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        /><br />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-        /><br />
-        <button type="submit">Register</button>
-      </form>
-    </div>
+    <Container className="mt-5" style={{ maxWidth: '400px' }}>
+      <h2 className="mb-4">Register</h2>
+      {message && <Alert variant={message.startsWith('✅') ? 'success' : 'danger'}>{message}</Alert>}
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3" controlId="registerName">
+          <Form.Control
+            type="text"
+            placeholder="Full Name"
+            value={full_name}
+            onChange={e => setFullName(e.target.value)}
+            required
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="registerEmail">
+          <Form.Control
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="registerPassword">
+          <Form.Control
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
+        </Form.Group>
+        <Button type="submit" variant="success" className="w-100">Register</Button>
+      </Form>
+    </Container>
   );
 }
 

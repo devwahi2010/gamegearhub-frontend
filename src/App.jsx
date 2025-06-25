@@ -35,6 +35,7 @@ function App() {
           } />
           <Route path="/my-rentals" element={<RequireAuth><MyRentals /></RequireAuth>} />
           <Route path="/manage-requests" element={<RequireAuth><ManageRequests /></RequireAuth>} />
+          <Route path="/chat/:requestId" element={<RequireAuth><Chat /></RequireAuth>} />
         </Routes>
       </Router>
     </AuthProvider>
