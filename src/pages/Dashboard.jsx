@@ -1,8 +1,10 @@
+// src/pages/Dashboard.jsx
+
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../api/axios';
 import { useNavigate } from 'react-router-dom';
-import HeroSection from '../components/HeroSection'; // ✅ New hero component
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import HeroSection from '../components/HeroSection';
 
 function Dashboard() {
   const [devices, setDevices] = useState([]);
@@ -26,7 +28,7 @@ function Dashboard() {
         subtitle="List your gaming gear or rent from others. Connect, chat, and play smarter!"
       />
 
-      <Container>
+      <Container className="mt-4">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h4>Your Devices</h4>
           <Button onClick={() => navigate('/create-device')} variant="primary">
@@ -38,8 +40,32 @@ function Dashboard() {
           {devices.length > 0 ? (
             devices.map((d) => (
               <Col key={d.id} md={6} lg={4}>
-                <Card className="mb-3" onClick={() => navigate(`/devices/${d.id}`)} style={{ cursor: 'pointer' }}>
-                  {d.image && <Card.Img variant="top" src={d.image} />}
+                <Card
+                  className="mb-3 shadow-sm"
+                  onClick={() => navigate(`/devices/${d.id}`)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {d.image ? (
+                    <Card.Img
+                      variant="top"
+                      src={d.image}
+                      alt={`${d.title} image`}
+                      style={{ maxHeight: '200px', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        height: '200px',
+                        backgroundColor: '#f0f0f0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#999',
+                      }}
+                    >
+                      No image available
+                    </div>
+                  )}
                   <Card.Body>
                     <Card.Title>{d.title}</Card.Title>
                     <Card.Text>
@@ -50,7 +76,7 @@ function Dashboard() {
               </Col>
             ))
           ) : (
-            <p>No devices listed yet.</p>
+            <p className="text-muted">No devices listed yet.</p>
           )}
         </Row>
 
@@ -71,7 +97,7 @@ function Dashboard() {
               </Col>
             ))
           ) : (
-            <p>No rental requests made yet.</p>
+            <p className="text-muted">No rental requests made yet.</p>
           )}
         </Row>
       </Container>
