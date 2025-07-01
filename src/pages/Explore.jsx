@@ -1,63 +1,65 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../api/axios';
-import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import HeroSection from '../components/HeroSection';
 
 function Explore() {
   const [devices, setDevices] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [filteredDevices, setFilteredDevices] = useState([]);
+  const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     axiosInstance.get('public-devices/')
-      .then(res => setDevices(res.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      .then(res => {
+        setDevices(res.data);
+        setFilteredDevices(res.data);
+      })
+      .catch(console.error);
   }, []);
 
+  const handleSearch = (e) => {
+    const keyword = e.target.value.toLowerCase();
+    setSearch(keyword);
+    const filtered = devices.filter(d =>
+      d.title.toLowerCase().includes(keyword) || d.city.toLowerCase().includes(keyword)
+    );
+    setFilteredDevices(filtered);
+  };
+
   return (
-    <>
-      <HeroSection
-        title="🔎 Explore Devices Near You"
-        subtitle="Browse gaming consoles, PCs, and gear listed by fellow gamers. Click to view and send rental requests!"
+    <Container className="mt-4">
+      <h2 className="mb-3">🎯 Explore Rentable Devices</h2>
+
+      <Form.Control
+        type="text"
+        placeholder="Search by device title or city..."
+        value={search}
+        onChange={handleSearch}
+        className="mb-4"
       />
 
-      <Container>
-        {loading ? (
-          <p>Loading devices...</p>
-        ) : devices.length === 0 ? (
-          <Alert variant="info">No devices available for rent at the moment.</Alert>
+      <Row>
+        {filteredDevices.length > 0 ? (
+          filteredDevices.map(dev => (
+            <Col key={dev.id} xs={12} sm={6} md={4} lg={3}>
+              <Card className="mb-4 shadow-sm">
+                {dev.image && <Card.Img variant="top" src={dev.image} style={{ height: '180px', objectFit: 'cover' }} />}
+                <Card.Body>
+                  <Card.Title>{dev.title}</Card.Title>
+                  <Card.Text>
+                    {dev.city} • ₹{dev.price_per_day}/day
+                  </Card.Text>
+                  <Button variant="primary" size="sm" onClick={() => navigate(`/devices/${dev.id}`)}>View</Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))
         ) : (
-          <Row>
-            {devices.map(dev => (
-              <Col key={dev.id} md={6} lg={4}>
-                <Card className="mb-3 h-100 shadow-sm">
-                  {dev.image && (
-                    <Card.Img
-                      variant="top"
-                      src={dev.image}
-                      alt={dev.title}
-                      style={{ objectFit: 'cover', height: '200px' }}
-                    />
-                  )}
-                  <Card.Body>
-                    <Card.Title>{dev.title}</Card.Title>
-                    <Card.Text>
-                      <strong>📍 {dev.city}</strong> <br />
-                      ₹{dev.price_per_day} / day
-                    </Card.Text>
-                    <Button variant="primary" onClick={() => navigate(`/devices/${dev.id}`)}>
-                      View Device
-                    </Button>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
+          <p className="text-muted">No devices match your search.</p>
         )}
-      </Container>
-    </>
+      </Row>
+    </Container>
   );
 }
 
