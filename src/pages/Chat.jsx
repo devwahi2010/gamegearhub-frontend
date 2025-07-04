@@ -11,7 +11,7 @@ function Chat() {
 
   const fetchMessages = async () => {
     try {
-      const res = await axiosInstance.get(`/api/requests/${requestId}/chat/`);
+      const res = await axiosInstance.get(`/requests/${requestId}/chat/`); // ✅ FIXED
       setMessages(res.data);
     } catch (err) {
       console.error('❌ Failed to load messages:', err);
@@ -32,7 +32,7 @@ function Chat() {
     if (image) formData.append('image', image);
 
     try {
-      await axiosInstance.post(`/api/requests/${requestId}/chat/`, formData, {
+      await axiosInstance.post(`/requests/${requestId}/chat/`, formData, { // ✅ FIXED
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setText('');
@@ -86,7 +86,9 @@ function Chat() {
           accept="image/*"
           onChange={(e) => setImage(e.target.files[0])}
         />
-        <Button onClick={sendMessage} variant="primary">Send</Button>
+        <Button onClick={sendMessage} variant="primary">
+          Send
+        </Button>
       </Form>
     </Container>
   );
