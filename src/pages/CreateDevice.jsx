@@ -1,3 +1,5 @@
+// src/pages/CreateDevice.jsx
+
 import React, { useState } from 'react';
 import axiosInstance from '../api/axios';
 import { useNavigate } from 'react-router-dom';
@@ -32,7 +34,7 @@ function CreateDevice() {
     }
   };
 
-  // ✅ Called when map is clicked
+  // 📍 Called when map is clicked
   const handleMapSelect = (latlng) => {
     setFormData((prev) => ({
       ...prev,
@@ -126,7 +128,7 @@ function CreateDevice() {
           </div>
         )}
 
-        {/* 📍 Updated MapPicker with Carto + GeoJSON */}
+        {/* 🗺️ Legal India-specific map with OSM-IN + GeoJSON */}
         <div className="mb-3">
           <MapPicker setCoords={handleMapSelect} />
           {formData.latitude && formData.longitude && (
