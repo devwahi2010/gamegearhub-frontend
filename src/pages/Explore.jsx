@@ -13,7 +13,7 @@ import {
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// 🛠️ Fix Leaflet marker icons
+// 🛠️ Fix Leaflet marker icons for Netlify
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -21,12 +21,14 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// 🔍 Smooth fly-to on Locate
+// 📍 Smooth fly-to functionality
 function MapFlyTo({ coords }) {
   const map = useMap();
   useEffect(() => {
     if (coords) {
-      map.flyTo([parseFloat(coords.latitude), parseFloat(coords.longitude)], 14, { duration: 1.5 });
+      map.flyTo([parseFloat(coords.latitude), parseFloat(coords.longitude)], 14, {
+        duration: 1.5,
+      });
     }
   }, [coords, map]);
   return null;
@@ -40,7 +42,7 @@ function Explore() {
   const [indiaGeoJson, setIndiaGeoJson] = useState(null);
   const navigate = useNavigate();
 
-  // 🔄 Load devices
+  // Fetch devices
   useEffect(() => {
     axiosInstance.get('public-devices/')
       .then(res => {
@@ -50,7 +52,7 @@ function Explore() {
       .catch(console.error);
   }, []);
 
-  // 🗺️ Load India border GeoJSON
+  // Load GeoJSON India border
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/geohacker/india/master/state/india_states.geojson')
       .then(res => res.json())
@@ -58,6 +60,7 @@ function Explore() {
       .catch(console.error);
   }, []);
 
+  // Search logic
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
     setSearch(keyword);
@@ -72,7 +75,7 @@ function Explore() {
       <h2 className="mb-3 text-center">🔍 Explore Rentable Devices Near You</h2>
 
       <Row>
-        {/* Left column */}
+        {/* Sidebar List */}
         <Col md={4} className="pe-md-0 mb-3">
           <Form.Control
             type="text"
@@ -117,7 +120,7 @@ function Explore() {
           ))}
         </Col>
 
-        {/* Map */}
+        {/* Map Viewer */}
         <Col md={8}>
           <MapContainer
             center={[22.5937, 78.9629]} // Center on India
@@ -125,19 +128,22 @@ function Explore() {
             scrollWheelZoom={true}
             style={{ height: '80vh', width: '100%' }}
           >
-            {/* 🗺️ Carto Voyager tiles */}
+            {/* ✅ OSM India Tiles (Official) */}
             <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/">CARTO</a>'
+              url="https://tile.osmindia.org/osm/{z}/{x}/{y}.png"
+              attribution='&copy; OSM contributors | Map: <a href="https://www.openstreetmap.in">OSM-India</a>'
             />
 
-            {/* 🇮🇳 India border overlay */}
+            {/* 🇮🇳 GeoJSON India Outline */}
             {indiaGeoJson && (
-              <GeoJSON data={indiaGeoJson} style={{ color: 'black', weight: 1, fillOpacity: 0.05 }} />
+              <GeoJSON
+                data={indiaGeoJson}
+                style={{ color: 'black', weight: 1, fillOpacity: 0.05 }}
+              />
             )}
 
+            {/* 📍 Fly-to + Markers */}
             {focusedCoords && <MapFlyTo coords={focusedCoords} />}
-
             {filteredDevices.map((dev) =>
               dev.latitude && dev.longitude ? (
                 <Marker
