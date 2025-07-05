@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents, GeoJSON } from 'react-le
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// 📌 Fix for missing marker icons in Vite/Webpack
+// 📌 Fix Leaflet marker icons for Vite/Webpack
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
@@ -12,13 +12,14 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png"
 });
 
+// 📍 Component to capture map clicks and place marker
 function LocationMarker({ setCoords }) {
   const [position, setPosition] = useState(null);
 
   useMapEvents({
     click(e) {
       setPosition(e.latlng);
-      setCoords(e.latlng); // Update parent state
+      setCoords(e.latlng); // Pass coords to parent component
     }
   });
 
@@ -30,20 +31,24 @@ export default function MapPicker({ setCoords }) {
 
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/geohacker/india/master/state/india_states.geojson')
-      .then(res => res.json())
-      .then(data => setIndiaGeoJson(data))
+      .then((res) => res.json())
+      .then((data) => setIndiaGeoJson(data))
       .catch(console.error);
   }, []);
 
   return (
-    <MapContainer center={[22.5937, 78.9629]} zoom={5} style={{ height: "300px", width: "100%" }}>
-      {/* 🌐 Carto Voyager basemap */}
+    <MapContainer
+      center={[22.5937, 78.9629]} // India center
+      zoom={5}
+      style={{ height: "300px", width: "100%" }}
+    >
+      {/* ✅ OSM-IN legal tiles */}
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>, &copy; <a href="https://carto.com/">CARTO</a>'
+        url="https://tile.osmindia.org/osm/{z}/{x}/{y}.png"
+        attribution='&copy; OSM contributors | Tiles: <a href="https://www.openstreetmap.in">OSM India</a>'
       />
 
-      {/* 🇮🇳 Optional India boundary overlay */}
+      {/* 🇮🇳 India boundary overlay */}
       {indiaGeoJson && (
         <GeoJSON
           data={indiaGeoJson}
