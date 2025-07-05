@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import axiosInstance from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Alert, Image } from 'react-bootstrap';
-import MapPicker from '../components/MapPicker';
+import IndiaMapPicker from '../components/IndiaMapPicker';
 
 function CreateDevice() {
   const [formData, setFormData] = useState({
@@ -34,12 +34,12 @@ function CreateDevice() {
     }
   };
 
-  // 📍 Called when map is clicked
-  const handleMapSelect = (latlng) => {
+  // 📍 Callback from IndiaMapPicker
+  const handleMapSelect = ({ latitude, longitude }) => {
     setFormData((prev) => ({
       ...prev,
-      latitude: latlng.lat,
-      longitude: latlng.lng,
+      latitude,
+      longitude,
     }));
   };
 
@@ -128,9 +128,9 @@ function CreateDevice() {
           </div>
         )}
 
-        {/* 🗺️ Legal India-specific map with OSM-IN + GeoJSON */}
+        {/* 🗺️ MapLibre + MapTiler India Map Picker */}
         <div className="mb-3">
-          <MapPicker setCoords={handleMapSelect} />
+          <IndiaMapPicker setCoords={handleMapSelect} />
           {formData.latitude && formData.longitude && (
             <small className="text-muted">
               Selected Location: {formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}
