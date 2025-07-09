@@ -1,5 +1,3 @@
-// src/pages/Explore.jsx
-
 import React, { useEffect, useRef, useState } from 'react';
 import axiosInstance from '../api/axios';
 import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
@@ -25,13 +23,20 @@ function Explore() {
       .catch(console.error);
   }, []);
 
-  // 🗺️ Initialize MapLibre with MapTiler India-aligned tiles
+  // 🗺️ Initialize Bangalore-only MapLibre
   useEffect(() => {
+    const apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
     const map = new maplibregl.Map({
       container: mapContainer.current,
-      style: `https://api.maptiler.com/maps/streets/style.json?key=uPStNkPf4iEY5VDx6Tb1`,
-      center: [78.9629, 22.5937],
-      zoom: 4.5,
+      style: `https://api.maptiler.com/maps/streets/style.json?key=${apiKey}`,
+      center: [77.5946, 12.9716], // Bangalore center
+      zoom: 11,
+      maxZoom: 16,
+      minZoom: 10,
+      maxBounds: [
+        [77.45, 12.80], // Southwest bounds of Bangalore
+        [77.75, 13.10]  // Northeast bounds of Bangalore
+      ]
     });
 
     map.addControl(new maplibregl.NavigationControl(), 'top-right');
@@ -40,13 +45,12 @@ function Explore() {
     return () => map.remove();
   }, []);
 
-  // 📍 Render markers on map whenever devices change
+  // 📍 Render markers for filtered devices
   useEffect(() => {
     if (!mapRef.current) return;
-
     const map = mapRef.current;
 
-    // Remove existing markers
+    // Remove old markers
     if (map._deviceMarkers) {
       map._deviceMarkers.forEach(marker => marker.remove());
     }
@@ -98,10 +102,10 @@ function Explore() {
 
   return (
     <Container fluid className="mt-4">
-      <h2 className="mb-3 text-center">🔍 Explore Rentable Devices Near You</h2>
+      <h2 className="mb-3 text-center">🔍 Explore Rentable Devices in Bangalore</h2>
 
       <Row>
-        {/* Sidebar: List of Devices */}
+        {/* Sidebar */}
         <Col md={4}>
           <Form.Control
             type="text"
@@ -141,7 +145,7 @@ function Explore() {
           ))}
         </Col>
 
-        {/* Map container */}
+        {/* Map Container */}
         <Col md={8}>
           <div
             ref={mapContainer}
