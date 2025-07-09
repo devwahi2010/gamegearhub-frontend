@@ -1,10 +1,8 @@
-// src/pages/CreateDevice.jsx
-
 import React, { useState } from 'react';
 import axiosInstance from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Alert, Image } from 'react-bootstrap';
-import IndiaMapPicker from '../components/IndiaMapPicker';
+import BangaloreMapPicker from '../components/BangaloreMapPicker';
 
 function CreateDevice() {
   const [formData, setFormData] = useState({
@@ -34,7 +32,6 @@ function CreateDevice() {
     }
   };
 
-  // 📍 Callback from IndiaMapPicker
   const handleMapSelect = ({ latitude, longitude }) => {
     setFormData((prev) => ({
       ...prev,
@@ -128,9 +125,9 @@ function CreateDevice() {
           </div>
         )}
 
-        {/* 🗺️ MapLibre + MapTiler India Map Picker */}
+        {/* 📍 Replaced with Bangalore-only map */}
         <div className="mb-3">
-          <IndiaMapPicker setCoords={handleMapSelect} />
+          <BangaloreMapPicker setCoords={handleMapSelect} />
           {formData.latitude && formData.longitude && (
             <small className="text-muted">
               Selected Location: {formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}
